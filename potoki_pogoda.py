@@ -1,4 +1,4 @@
-from threading import Thread
+from threading import Thread, Event
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -8,8 +8,9 @@ from multiprocessing import Process
 import multiprocessing
 
 stat_time = time.time()
+
+
 def sinh_pog():
-    session = requests.Session()
     """Синхронно вызываем get запрос 100 раз"""
 
     #Ссылка на сайт
@@ -21,7 +22,7 @@ def sinh_pog():
 
     for i in range(25):
         #Отправляем запрос на сайт с командой получить
-        response = session.get(url, headers=headers)
+        response = requests.get(url, headers=headers)
 
         # просим у сайта вернуть красиво отформатированный текст
         soup = BeautifulSoup(response.text, 'lxml')
@@ -32,11 +33,10 @@ def sinh_pog():
         print(f'В Бийске{data} градусов')
 
 
-
-th1 = Thread(target=sinh_pog(), daemon=True)
-th2 = Thread(target=sinh_pog(), daemon=True)
-th3 = Thread(target=sinh_pog(), daemon=True)
-th4 = Thread(target=sinh_pog(), daemon=True)
+th1 = Thread(target=sinh_pog)
+th2 = Thread(target=sinh_pog)
+th3 = Thread(target=sinh_pog)
+th4 = Thread(target=sinh_pog)
 
 th1.start()
 th2.start()
@@ -47,7 +47,6 @@ th1.join()
 th2.join()
 th3.join()
 th4.join()
-
 
 end_time = time.time() - stat_time
 print(f'Время выполнения программы {end_time}')
