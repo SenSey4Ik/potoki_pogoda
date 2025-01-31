@@ -9,6 +9,7 @@ import multiprocessing
 
 stat_time = time.time()
 def sinh_pog():
+    session = requests.Session()
     """Синхронно вызываем get запрос 100 раз"""
 
     #Ссылка на сайт
@@ -20,7 +21,7 @@ def sinh_pog():
 
     for i in range(25):
         #Отправляем запрос на сайт с командой получить
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
 
         # просим у сайта вернуть красиво отформатированный текст
         soup = BeautifulSoup(response.text, 'lxml')
