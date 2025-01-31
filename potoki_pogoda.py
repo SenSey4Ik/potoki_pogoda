@@ -2,36 +2,57 @@ from threading import Thread
 import requests
 from bs4 import BeautifulSoup
 import time
+import asyncio
+import aiohttp
+from multiprocessing import Process
 
 stat_time = time.time()
-def sinh_pog(i):
-    """Синхронно вызываем get запрос 100 раз"""
-
-    #Ссылка на сайт
-    url='https://www.meteovesti.ru/pogoda_10/29947'
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
-    }
+async def zapros():
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://www.meteovesti.ru/pogoda_10/29947') as response:
+            return await response.text()
 
 
-    #Отправляем запрос на сайт с командой получить
-    response = requests.get(url, headers=headers)
-
-    # просим у сайта вернуть красиво отформатированный текст
-    soup = BeautifulSoup(response.text, 'lxml')
-
-    #Парсим класс в котором хранится погода
-    data = soup.find('span', class_="_h3 align-top me-1 d-inline-block").text
-
-    print(f'В Бийске{data} градусов')
-    print(f'Запущен поток {i}')
+async def parcer():
+        html = await zapros()
+        soup = BeautifulSoup(html, 'lxml')
+        data = soup.find('span', class_="_h3 align-top me-1 d-inline-block").text
+        print(f"В Бийске {data} градусов!")
 
 
-for i in range(10):
-    th = Thread(target=sinh_pog(i), args=(i,))
 
-th.start()
+
+
+th1 = Thread(target=parcer(), daemon=True)
+loop = asyncio.get_event_loop()
+tasks1 = [loop.create_task(parcer()) for x in range(25)]
+loop.run_until_complete(asyncio.wait(tasks1))
+th1.start()
+th1.join()
+
+
+
+th2 = Thread(target=parcer(), daemon=True)
+loop = asyncio.get_event_loop()
+tasks2 = [loop.create_task(parcer()) for x in range(25)]
+loop.run_until_complete(asyncio.wait(tasks2))
+th2.start()
+th2.join()
+
+th3 = Thread(target=parcer(), daemon=True)
+loop = asyncio.get_event_loop()
+tasks3 = [loop.create_task(parcer()) for x in range(25)]
+loop.run_until_complete(asyncio.wait(tasks3))
+th3.start()
+th3.join()
+
+
+th4 = Thread(target=parcer(), daemon=True)
+loop = asyncio.get_event_loop()
+tasks4 = [loop.create_task(parcer()) for x in range(25)]
+loop.run_until_complete(asyncio.wait(tasks4))
+th4.start()
+th4.join()
 
 end_time = time.time() - stat_time
 print(f'Время выполнения программы {end_time}')
