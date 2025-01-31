@@ -1,0 +1,17 @@
+поток 1 = нить (парсер)
+th1 = Thread(target=parcer(), daemon=True)
+
+#Петля = асинхронно получить событие цикл
+loop = asyncio.get_event_loop()
+
+
+#Задача 1 = цикл создать задачу (парсер) перебор 25
+tasks1 = [loop.create_task(parcer()) for x in range(25)]
+
+
+цикл запустить до завершения (асинхронно ждать задачу 1)
+loop.run_until_complete(asyncio.wait(tasks1))
+
+
+th1.start()
+th1.join()
